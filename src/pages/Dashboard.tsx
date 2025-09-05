@@ -10,8 +10,10 @@ import CreateFlightModal from "../components/CreateFlightModal";
 import EditFlightModal from "../components/EditFlightModal";
 import PassengerListModal from "../components/PassengerListModal";
 import RegisterPassengerModal from "../components/RegisterPassengerModal";
+import useAuthContext from "../context/AuthHook";
 
 const Dashboard: React.FC = () => {
+  const {setIsAutenticate} = useAuthContext()
   const [openFlightModal, setOpenFlightModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openPassengersModal, setOpenPassengersModal] = useState(false);
@@ -65,6 +67,19 @@ const Dashboard: React.FC = () => {
   //   setFlights((prev) => [...prev, newFlight]);
   // };
 
+  const close = async () =>{
+    const res = await fetch("http://localhost:3333/dorado/logout", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: 'include'
+    });
+    if(res.status === 200){
+      return setIsAutenticate(false)
+    }
+  }
+
   return (
     <>
       <CreateFlightModal isOpen={openFlightModal} onClose={() => setOpenFlightModal(false)} />
@@ -78,8 +93,13 @@ const Dashboard: React.FC = () => {
             <PiAirplaneTakeoffLight size={24} />
             Gestión de Vuelos
           </h1>
-          <button className="bg-white px-4 py-2 border rounded-lg hover:bg-gray-100 transition text-sm font-medium flex items-center gap-2">
-            <MdLogout size={18} />
+          <button className="bg-white px-4 py-2 border rounded-lg hover:bg-gray-100 transition text-sm font-medium flex items-center gap-2"
+          onClick={()=>{
+              close()
+            }}
+          >
+            <MdLogout size={18} 
+            />
             Cerrar Sesión
           </button>
         </header>

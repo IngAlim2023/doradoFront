@@ -4,6 +4,8 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import { useEffect } from "react";
 import useAuthContext from "./context/AuthHook";
+import ProtectedRoute from "./pages/ProtectedRoute";
+import NotFound from "./pages/NotFound";
 const App = () => {
   const { isAutenticate, setIsAutenticate } = useAuthContext();
 
@@ -34,7 +36,10 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
