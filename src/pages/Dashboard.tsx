@@ -71,7 +71,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <>
-      <CreateFlightModal isOpen={openFlightModal}  onClose={() => setOpenFlightModal(false)} />
+      <CreateFlightModal isOpen={openFlightModal}  onClose={() => setOpenFlightModal(false)} accion={accion} setAccion={setAccion} />
       <EditFlightModal openEditModal={openEditModal} setOpenEditModal={setOpenEditModal} codF={codF} setCodF={setCodF} setAccion={setAccion} accion={accion}/>
       <PassengerListModal isOpen={openPassengersModal} onClose={() => setOpenPassengersModal(false)} />
       <RegisterPassengerModal isOpen={openRegisterModal} onClose={() => setOpenRegisterModal(false)} />
