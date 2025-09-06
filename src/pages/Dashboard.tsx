@@ -1,11 +1,10 @@
 // src/pages/Dashboard.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUserPlus } from "react-icons/fa6";
 import { MdLogout, MdModeEditOutline } from "react-icons/md";
 import { PiAirplaneTakeoffLight } from "react-icons/pi";
 
 
-import type { Flight } from "../types";
 import CreateFlightModal from "../components/CreateFlightModal";
 import EditFlightModal from "../components/EditFlightModal";
 import PassengerListModal from "../components/PassengerListModal";
@@ -19,53 +18,25 @@ const Dashboard: React.FC = () => {
   const [openPassengersModal, setOpenPassengersModal] = useState(false);
   const [openRegisterModal, setOpenRegisterModal] = useState(false);
 
-  // const [flights, setFlights] = useState<Flight[]>([]);
-  const [flights,  ] = useState<Flight[]>([
-  {
-    codigo: "AV123",
-    aerolinea: "Avianca",
-    destino: "Nueva York",
-    salida: "08:00",
-    llegada: "13:00",
-    duracion: "5h 00m",
-  },
-  {
-    codigo: "LA456",
-    aerolinea: "LATAM",
-    destino: "Miami",
-    salida: "09:30",
-    llegada: "12:30",
-    duracion: "3h 00m",
-  },
-  {
-    codigo: "UA789",
-    aerolinea: "United Airlines",
-    destino: "Los Ángeles",
-    salida: "11:00",
-    llegada: "16:00",
-    duracion: "7h 00m",
-  },
-  {
-    codigo: "AC101",
-    aerolinea: "Air Canada",
-    destino: "Toronto",
-    salida: "13:00",
-    llegada: "18:00",
-    duracion: "5h 00m",
-  },
-  {
-    codigo: "AA222",
-    aerolinea: "American Airlines",
-    destino: "Dallas",
-    salida: "15:30",
-    llegada: "19:30",
-    duracion: "4h 00m",
-  },
-]);
 
-  // const addFlight = (newFlight: Flight) => {
-  //   setFlights((prev) => [...prev, newFlight]);
-  // };
+  //Acciones para recargar la informacion de ser necesario:
+  const [accion, setAccion] =useState<boolean>(false)
+
+  //Para editar un vuelo:
+  const [ codF, setCodF] = useState<string>('');
+
+  // En data se almacena la informacion de los vuelos:
+  const [data, setData] = useState<any[]>([]);
+
+  useEffect(()=>{
+    const loadData = async ()=>{
+      const res = await fetch('http://localhost:3333/dorado/infoflights')
+      const respuesta = await res.json()
+      setData(respuesta.data)
+    }
+    loadData()
+  },[accion])
+
 
   const close = async () =>{
     const res = await fetch("http://localhost:3333/dorado/logout", {
@@ -80,10 +51,28 @@ const Dashboard: React.FC = () => {
     }
   }
 
+  // Para calcular la duracion del vuelo
+  const calcularDuracion =(horasalida:any, horallegada:any) => {
+  const [hSal, mSal, sSal] = horasalida.split(':').map(Number);
+  const [hLleg, mLleg, sLleg] = horallegada.split(':').map(Number);
+
+  let salidaMs = hSal * 3600 + mSal * 60 + sSal;
+  let llegadaMs = hLleg * 3600 + mLleg * 60 + sLleg;
+
+  if (llegadaMs < salidaMs) llegadaMs += 24 * 3600;
+
+  const duracionMs = llegadaMs - salidaMs;
+  const horas = Math.floor(duracionMs / 3600);
+  const minutos = Math.floor((duracionMs % 3600) / 60);
+
+  return `${horas}h ${minutos}m`;
+}
+
+
   return (
     <>
-      <CreateFlightModal isOpen={openFlightModal} onClose={() => setOpenFlightModal(false)} />
-      <EditFlightModal isOpen={openEditModal} onClose={() => setOpenEditModal(false)} />
+      <CreateFlightModal isOpen={openFlightModal}  onClose={() => setOpenFlightModal(false)} />
+      <EditFlightModal openEditModal={openEditModal} setOpenEditModal={setOpenEditModal} codF={codF} setCodF={setCodF} setAccion={setAccion} accion={accion}/>
       <PassengerListModal isOpen={openPassengersModal} onClose={() => setOpenPassengersModal(false)} />
       <RegisterPassengerModal isOpen={openRegisterModal} onClose={() => setOpenRegisterModal(false)} />
 
@@ -118,21 +107,24 @@ const Dashboard: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {flights.map((flight) => (
+              {data.map((flight) => (
                 <tr
-                  key={flight.codigo}
+                  key={flight.id}
                   className="bg-gray-50 rounded-lg shadow-sm hover:bg-blue-50 transition"
                 >
-                  <td className="px-2 py-3">{flight.codigo}</td>
-                  <td className="px-2 py-3">{flight.aerolinea}</td>
-                  <td className="px-2 py-3">{flight.destino}</td>
-                  <td className="px-2 py-3">{flight.salida}</td>
-                  <td className="px-2 py-3">{flight.llegada}</td>
-                  <td className="px-2 py-3">{flight.duracion}</td>
+                  <td className="px-2 py-3">{flight.id}</td>
+                  <td className="px-2 py-3">{flight.airline.descripcion}</td>
+                  <td className="px-2 py-3">{flight.destination.descripcion}</td>
+                  <td className="px-2 py-3">{flight.horasalida}</td>
+                  <td className="px-2 py-3">{flight.horallegada}</td>
+                  <td className="px-2 py-3">{calcularDuracion(flight.horasalida, flight.horallegada)}</td>
                   <td className="px-2 py-3 flex gap-3 text-sm">
                     <button
                       className="text-indigo-600 hover:underline flex items-center gap-1"
-                      onClick={() => setOpenEditModal(true)}
+                      onClick={() => {
+                        setCodF(flight.id)
+                        setOpenEditModal(true)
+                      }}
                     >
                       <MdModeEditOutline />
                       Editar

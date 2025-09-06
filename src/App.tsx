@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import useAuthContext from "./context/AuthHook";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import NotFound from "./pages/NotFound";
+import { Toaster } from "react-hot-toast";
 const App = () => {
   const { isAutenticate, setIsAutenticate } = useAuthContext();
 
@@ -41,6 +42,7 @@ const App = () => {
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <Toaster/>
     </BrowserRouter>
   );
 };
