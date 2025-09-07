@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 
 const RegisterPassengerModal = ({
@@ -38,6 +39,14 @@ const RegisterPassengerModal = ({
 
     console.log(respuesta);
 
+    if(respuesta.message === 'Exito'){
+        
+        toast.success('Vuelo creado')
+        onClose()
+        return
+    }
+    return toast.error('No se pudo crear el vuelo')
+
   };
 
   return (
@@ -71,7 +80,6 @@ const RegisterPassengerModal = ({
             className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             {...register("codvuelo", { required: true })}
           >
-            
             {data.map((val) => (
               <option key={val.id} value={val.id}>
                 {val.id}
