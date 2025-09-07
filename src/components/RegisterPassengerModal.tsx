@@ -37,7 +37,6 @@ const RegisterPassengerModal = ({
 
     const respuesta = await res.json();
 
-    console.log(respuesta);
 
     if(respuesta.message === 'Exito'){
         
