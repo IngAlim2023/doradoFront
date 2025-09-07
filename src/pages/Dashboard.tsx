@@ -1,4 +1,3 @@
-// src/pages/Dashboard.tsx
 import React, { useEffect, useState } from "react";
 import { FaUserPlus } from "react-icons/fa6";
 import { MdLogout, MdModeEditOutline } from "react-icons/md";
@@ -74,7 +73,7 @@ const Dashboard: React.FC = () => {
       <CreateFlightModal isOpen={openFlightModal}  onClose={() => setOpenFlightModal(false)} accion={accion} setAccion={setAccion} />
       <EditFlightModal openEditModal={openEditModal} setOpenEditModal={setOpenEditModal} codF={codF} setCodF={setCodF} setAccion={setAccion} accion={accion}/>
       <PassengerListModal isOpen={openPassengersModal} onClose={() => setOpenPassengersModal(false)} />
-      <RegisterPassengerModal isOpen={openRegisterModal} onClose={() => setOpenRegisterModal(false)} />
+      <RegisterPassengerModal isOpen={openRegisterModal} onClose={() => setOpenRegisterModal(false)} accion={accion} setAccion={setAccion} />
 
       <div className="min-h-screen bg-gray-100 p-6">
         <header className="flex items-center justify-between mb-6">
@@ -98,6 +97,7 @@ const Dashboard: React.FC = () => {
             <thead>
               <tr className="text-gray-600">
                 <th>CÓDIGO DE VUELO</th>
+                <th>SALA DE ABORDAJE</th>
                 <th>AEROLÍNEA</th>
                 <th>DESTINO</th>
                 <th>HORA DE SALIDA</th>
@@ -113,6 +113,7 @@ const Dashboard: React.FC = () => {
                   className="bg-gray-50 rounded-lg shadow-sm hover:bg-blue-50 transition"
                 >
                   <td className="px-2 py-3">{flight.id}</td>
+                  <td className="px-2 py-3">{flight.salaabordaje}</td>
                   <td className="px-2 py-3">{flight.airline.descripcion}</td>
                   <td className="px-2 py-3">{flight.destination.descripcion}</td>
                   <td className="px-2 py-3">{flight.horasalida}</td>
